@@ -1,0 +1,412 @@
+:root{
+  --bg-base: #080D18;
+  --bg-surface: #0F1830;
+  --bg-surface-alt: #141F3D;
+  --bg-sidebar: #0A1226;
+  --line: rgba(140,164,214,0.14);
+  --line-strong: rgba(140,164,214,0.24);
+
+  --cyan: #2DE2E6;
+  --cyan-dim: rgba(45,226,230,0.16);
+  --green: #3ADB8F;
+  --green-dim: rgba(58,219,143,0.16);
+  --blue: #4C8DFF;
+  --blue-dim: rgba(76,141,255,0.16);
+  --amber: #FFC66B;
+  --alert: #FF6B7A;
+  --alert-dim: rgba(255,107,122,0.14);
+
+  --text-primary: #EAF0FC;
+  --text-secondary: #9BB0D6;
+  --text-muted: #5D6E92;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+}
+
+*{ box-sizing: border-box; margin:0; padding:0; }
+
+body{
+  background: radial-gradient(ellipse 1200px 800px at 15% -10%, #101c3c 0%, var(--bg-base) 55%);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  width: 232px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--line);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  transition: transform .25s ease;
+  z-index: 60;
+}
+
+/* Botón de menú — oculto en escritorio, aparece solo en móvil (ver media query) */
+.menu-toggle{
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--line);
+  color: var(--text-primary);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Fondo oscuro detrás del panel cuando está abierto en móvil */
+.sidebar-overlay{
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(4,7,15,0.6);
+  z-index: 50;
+}
+.sidebar-overlay.open{ display: block; }
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 0 8px;
+}
+.brand-mark{
+  width:34px; height:34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-display);
+  font-weight:700;
+  font-size: 14px;
+  color: #06101f;
+}
+.brand-text{
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+nav{ display:flex; flex-direction:column; gap: 2px; }
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover{ background: rgba(140,164,214,0.06); color: var(--text-primary); }
+.nav-item.active{
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+.nav-icon{ font-size: 15px; width: 18px; text-align:center; opacity:.9; }
+
+.sidebar-foot{
+  margin-top: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 10px 12px;
+  line-height: 1.6;
+}
+
+/* ---------- Main ---------- */
+main{
+  flex: 1;
+  padding: 28px 36px 48px;
+  max-width: 1180px;
+}
+
+.topbar{
+  display:flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.location h1{
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+.location p{
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+
+.status-cluster{
+  display:flex;
+  gap: 10px;
+}
+.status-pill{
+  display:flex;
+  align-items:center;
+  gap: 7px;
+  background: var(--bg-surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+.dot{
+  width:7px; height:7px; border-radius:50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+.dot.warn{ background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+
+.status-pill.alert{
+  border-color: var(--alert);
+  color: var(--alert);
+}
+
+/* Cuando el menú lateral filtra a una sola sección, el grid de 3
+   columnas deja huecos vacíos — se centra la tarjeta restante. */
+.metric-grid.filtrado,
+.gauge-row.filtrado{
+  grid-template-columns: 1fr;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---------- Metric cards ---------- */
+.metric-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.card{
+  background: linear-gradient(180deg, var(--bg-surface-alt), var(--bg-surface));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+}
+
+.metric-head{
+  display:flex;
+  justify-content: space-between;
+  align-items:flex-start;
+  margin-bottom: 14px;
+}
+.metric-label{
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.trend-chip{
+  font-size: 11px;
+  font-family: var(--font-mono);
+  padding: 3px 9px;
+  border-radius: 999px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.trend-chip.up{ background: var(--green-dim); color: var(--green); }
+.trend-chip.down{ background: var(--alert-dim); color: var(--alert); }
+.trend-chip.stable{ background: var(--blue-dim); color: var(--blue); }
+
+.metric-value{
+  font-family: var(--font-mono);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  display:flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.metric-value .unit{
+  font-size: 18px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.metric-sub{
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.bar-track{
+  margin-top: 12px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(140,164,214,0.1);
+  overflow: hidden;
+}
+.bar-fill{
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+}
+
+/* ---------- Signature: instrument gauges ---------- */
+.gauge-row{
+  display:grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.gauge-card{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+.gauge-card .metric-label{ align-self:flex-start; margin-bottom: 6px; }
+
+.dial-wrap{ position: relative; width: 168px; height: 168px; margin: 6px 0 4px; }
+.dial-wrap svg{ width:100%; height:100%; transform: rotate(-90deg); }
+.dial-track{ fill:none; stroke: rgba(140,164,214,0.12); stroke-width: 8; }
+.dial-fill{ fill:none; stroke-linecap: round; stroke-width: 8; filter: drop-shadow(0 0 6px currentColor); transition: stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+.dial-fill.cyan{ stroke: var(--cyan); color: var(--cyan); }
+.dial-fill.green{ stroke: var(--green); color: var(--green); }
+.dial-fill.blue{ stroke: var(--blue); color: var(--blue); }
+
+.dial-center{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+}
+.dial-value{ font-family: var(--font-mono); font-size: 26px; font-weight: 500; }
+.dial-caption{ font-size: 10.5px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .06em; }
+
+.tick{ stroke: rgba(140,164,214,0.35); stroke-width: 1.5; }
+
+/* ---------- Chart section ---------- */
+.chart-card{ margin-bottom: 20px; }
+.chart-head{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.chart-title{
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+}
+.chart-tabs{ display:flex; gap: 4px; background: var(--bg-base); padding: 4px; border-radius: 10px; border: 1px solid var(--line); }
+.chart-tab{
+  font-size: 12px; font-family: var(--font-mono);
+  padding: 6px 12px; border-radius: 7px;
+  color: var(--text-muted); cursor:pointer;
+}
+.chart-tab.active{ background: var(--cyan-dim); color: var(--cyan); }
+
+.chart-svg-wrap{ width:100%; height: 200px; }
+
+/* ---------- Forecast ---------- */
+.forecast-title{
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.forecast-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.forecast-card{
+  background: var(--bg-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align:center;
+}
+.forecast-card.today{ border-color: var(--line-strong); background: var(--bg-surface-alt); }
+.forecast-day{ font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform:uppercase; letter-spacing: .05em; }
+.forecast-icon{ font-size: 26px; margin: 12px 0 8px; }
+.forecast-temp{ font-family: var(--font-mono); font-size: 19px; font-weight: 500; }
+.forecast-meta{
+  display:flex; justify-content:center; gap: 10px;
+  margin-top: 10px; font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);
+}
+
+/* ---------- Tablet: todavía hay espacio para 2 columnas ---------- */
+@media (max-width: 980px){
+  .gauge-row{ grid-template-columns: 1fr 1fr; }
+  .gauge-row .gauge-card:first-child{ grid-column: 1 / -1; }
+  main{ padding: 22px; }
+}
+
+/* ---------- Móvil: el sidebar se convierte en panel deslizante ---------- */
+@media (max-width: 760px){
+  .menu-toggle{ display: flex; }
+
+  .sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    box-shadow: 24px 0 48px rgba(0,0,0,0.4);
+  }
+  .sidebar.open{ transform: translateX(0); }
+
+  .topbar{
+    align-items: center;
+  }
+  .topbar-left{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  main{ padding: 16px; }
+
+  .metric-grid, .gauge-row{ grid-template-columns: 1fr; }
+  .gauge-row .gauge-card:first-child{ grid-column: auto; }
+
+  .forecast-grid{ grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  .location h1{ font-size: 21px; }
+  .metric-value{ font-size: 32px; }
+  .dial-wrap{ width: 148px; height: 148px; }
+
+  .status-cluster{ width: 100%; }
+  .status-pill{ flex: 1; justify-content: center; }
+}
+
+/* ---------- Móvil angosto: pronóstico a una columna ---------- */
+@media (max-width: 420px){
+  .forecast-grid{ grid-template-columns: 1fr 1fr; }
+  .status-cluster{ flex-direction: column; }
+}

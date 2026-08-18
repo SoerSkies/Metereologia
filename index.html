@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteorología · Ciudad de México</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">M</div>
+      <div class="brand-text">Meteorología</div>
+    </div>
+    <nav>
+      <div class="nav-item active" data-section="dashboard"><span class="nav-icon"></span> Dashboard</div>
+      <div class="nav-item" data-section="temperatura"><span class="nav-icon"></span> Temperatura</div>
+      <div class="nav-item" data-section="humedad"><span class="nav-icon"></span> Humedad</div>
+      <div class="nav-item" data-section="precipitacion"><span class="nav-icon"></span> Precipitación</div>
+      <div class="nav-item" data-section="historial"><span class="nav-icon"></span> Historial</div>
+      <div class="nav-item" data-section="pronostico"><span class="nav-icon"></span> Pronóstico</div>
+      <div class="nav-item" data-section="sensores"><span class="nav-icon"></span> Sensores</div>
+      <div class="nav-item" data-section="configuracion"><span class="nav-icon"></span> Configuración</div>
+    </nav>
+    <div class="sidebar-foot">
+      FASE 6 — Finalizacion del dashboard<br>
+      Espera de conexión con ESP32 y DHT11, y de datos de pronóstico externo.
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú de navegación">☰</button>
+        <div class="location">
+          <h1> Ciudad de México</h1>
+          <p id="clock-text">Esperando primera lectura…</p>
+        </div>
+      </div>
+      <div class="status-cluster">
+        <div class="status-pill" id="status-esp32"><span class="dot"></span> Conectando…</div>
+        <div class="status-pill" id="status-dht"><span class="dot"></span> Conectando…</div>
+      </div>
+    </div>
+
+    <!-- Tarjetas principales -->
+    <section class="metric-grid" id="metric-grid">
+      <div class="card" data-section="dashboard,temperatura">
+        <div class="metric-head">
+          <div class="metric-label">Temperatura</div>
+          <div class="trend-chip stable" id="temp-trend">● esperando datos</div>
+        </div>
+        <div class="metric-value"><span id="temp-number">--</span><span class="unit">°C</span></div>
+        <div class="metric-sub">Sensación similar · media diaria 23.1°C</div>
+      </div>
+
+      <div class="card" data-section="dashboard,humedad">
+        <div class="metric-head">
+          <div class="metric-label">Humedad</div>
+          <div class="trend-chip stable">● estable</div>
+        </div>
+        <div class="metric-value"><span id="hum-number">--</span><span class="unit">%</span></div>
+        <div class="bar-track"><div class="bar-fill" id="hum-bar" style="width:0%"></div></div>
+      </div>
+
+      <div class="card" data-section="dashboard,precipitacion,pronostico">
+        <div class="metric-head">
+          <div class="metric-label">Precipitación</div>
+          <div class="trend-chip down" id="precip-estado">Cargando…</div>
+        </div>
+        <div class="metric-value"><span id="precip-value">--</span><span class="unit">mm</span></div>
+        <div class="metric-sub" id="precip-sub">Fuente: pronóstico externo</div>
+      </div>
+    </section>
+
+    <!-- Medidores circulares -->
+    <section class="gauge-row" id="gauge-row">
+      <div class="card gauge-card" data-section="dashboard,temperatura">
+        <div class="metric-label">Temperatura</div>
+        <div class="dial-wrap">
+          <svg viewBox="0 0 168 168">
+            <circle class="dial-track" cx="84" cy="84" r="72"/>
+            <circle class="dial-fill cyan" id="dial-temp" cx="84" cy="84" r="72"
+              stroke-dasharray="452" stroke-dashoffset="452"/>
+          </svg>
+          <div class="dial-center">
+            <div class="dial-value" id="dial-temp-value">--°</div>
+            <div class="dial-caption">de 40° máx</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card gauge-card" data-section="dashboard,humedad">
+        <div class="metric-label">Humedad</div>
+        <div class="dial-wrap">
+          <svg viewBox="0 0 168 168">
+            <circle class="dial-track" cx="84" cy="84" r="72"/>
+            <circle class="dial-fill blue" id="dial-hum" cx="84" cy="84" r="72"
+              stroke-dasharray="452" stroke-dashoffset="452"/>
+          </svg>
+          <div class="dial-center">
+            <div class="dial-value" id="dial-hum-value">--%</div>
+            <div class="dial-caption">relativa</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card gauge-card" data-section="dashboard,precipitacion,pronostico">
+        <div class="metric-label">Prob. lluvia</div>
+        <div class="dial-wrap">
+          <svg viewBox="0 0 168 168">
+            <circle class="dial-track" cx="84" cy="84" r="72"/>
+            <circle class="dial-fill green" id="dial-rain" cx="84" cy="84" r="72"
+              stroke-dasharray="452" stroke-dashoffset="284"/>
+          </svg>
+          <div class="dial-center">
+            <div class="dial-value" id="dial-rain-value">--%</div>
+            <div class="dial-caption">hoy</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gráfica histórica: se conecta en Fase 5, por ahora sigue con datos de ejemplo -->
+    <section class="card chart-card" data-section="dashboard,temperatura,humedad,precipitacion,historial">
+      <div class="chart-head">
+        <div class="chart-title" id="chart-title">Evolución — Temperatura, últimas 12 horas</div>
+        <div class="chart-tabs" id="chart-tabs">
+          <div class="chart-tab active" data-metric="temperatura">Temperatura</div>
+          <div class="chart-tab" data-metric="humedad">Humedad</div>
+          <div class="chart-tab" data-metric="precipitacion">Precipitación</div>
+        </div>
+      </div>
+      <div class="chart-svg-wrap">
+        <svg viewBox="0 0 760 200" width="100%" height="100%" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+              <stop id="area-stop-top" offset="0%" stop-color="#2DE2E6" stop-opacity="0.28"/>
+              <stop id="area-stop-bottom" offset="100%" stop-color="#2DE2E6" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g stroke="rgba(140,164,214,0.12)" stroke-width="1">
+            <line x1="0" y1="40" x2="760" y2="40"/>
+            <line x1="0" y1="90" x2="760" y2="90"/>
+            <line x1="0" y1="140" x2="760" y2="140"/>
+          </g>
+          <path id="chart-area" d="M0,150 C60,140 90,110 140,105 C200,98 230,60 290,55 C350,50 380,80 440,75 C500,70 540,40 600,38 C660,36 700,55 760,50 L760,200 L0,200 Z" fill="url(#areaFill)"/>
+          <path id="chart-line" d="M0,150 C60,140 90,110 140,105 C200,98 230,60 290,55 C350,50 380,80 440,75 C500,70 540,40 600,38 C660,36 700,55 760,50"
+                fill="none" stroke="#2DE2E6" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Pronóstico: generado por pronostico.js (Fase 6) a partir de una API externa -->
+    <section data-section="dashboard,precipitacion,pronostico">
+      <div class="forecast-title">Pronóstico — próximos días</div>
+      <div class="forecast-grid" id="forecast-grid">
+        <div class="forecast-card today">
+          <div class="forecast-day">Cargando…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sensores y Configuración todavía no tienen vista propia construida.
+         En vez de fingir contenido, se avisa claramente que está pendiente. -->
+    <section class="card" data-section="sensores">
+      <div class="forecast-title">Sensores</div>
+      <p class="metric-sub" style="margin-top:6px;">
+        El estado de conexión del ESP32 y del DHT11 se muestra arriba, en la barra superior.
+        Una vista dedicada con más detalle (última lectura, historial de desconexiones)
+        todavía no está construida.
+      </p>
+    </section>
+
+    <section class="card" data-section="configuracion">
+      <div class="forecast-title">Configuración</div>
+      <p class="metric-sub" style="margin-top:6px;">
+        Esta sección está en construcción — todavía no hay opciones configurables.
+      </p>
+    </section>
+  </main>
+
+<script src="js/nav.js"></script>
+<script src="js/chart.js"></script>
+<script src="js/pronostico.js"></script>
+<script type="module" src="js/script.js"></script>
+<script type="module" src="js/historico.js"></script>
+</body>
+</html>
