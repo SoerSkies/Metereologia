@@ -5,8 +5,9 @@
 // el proyecto a un repositorio, este es el único archivo que necesitas
 // excluir (.gitignore) para no exponer tus claves.
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig = {
   apiKey: "AIzaSyDq5v1UPAEkuatEY9510t9OUjKi5BgQTe0",
-  databaseURL: "https://proyecto-fa23b-default-rtdb.firebaseio.com/",
+  databaseURL: "https://proyecto-fa23b-default-rtdb.firebaseio.com",
   projectId: "proyecto-fa23b"
 };
